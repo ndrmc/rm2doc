@@ -13,7 +13,7 @@ import (
 // Operation represents a construct from CATS which is one of the collections in the analytics db
 type Operation struct {
 	Base
-	ID               int64          `json:"id"`
+	ID               int            `json:"id"`
 	ProgramID        int64          `json:"program_id"`
 	HrdID            sql.NullInt64  `json:"hrd_id"`
 	FscdAnnualPlanID sql.NullInt64  `json:"fscd_annual_plan_id"`
@@ -32,10 +32,11 @@ type Operation struct {
 	ProgramInfo      *Program       `json:"program"`
 	RationInfo       *Ration        `json:"ration"`
 	Dispatches       []*Dispatch    `json:"dispatches"`
+	Requisitions     []*Requisition `json:"requisitions"`
 }
 
 // GetOperation returns an operation record from transactional database
-func GetOperation(id int64) *Operation {
+func GetOperation(id int) *Operation {
 	var stmt = "select * from operations where id=$1"
 	rows, err := database.Con.Query(stmt, id)
 	if err != nil {
@@ -51,6 +52,7 @@ func GetOperation(id int64) *Operation {
 	operation := operations[0]
 	operation.HrdInfo = GetHrd(operation.HrdID.Int64)
 	operation.Dispatches = GetDispatches(operation.ID)
+	operation.Requisitions = GetRequisitions(operation.ID)
 	return operation
 }
 

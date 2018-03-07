@@ -24,9 +24,18 @@ func countOperations() {
 	fmt.Printf("Total number of Operations is: %d", count)
 }
 
-func loadOperation(id int64) {
+func loadOperation(id int) {
 	result := models.GetOperation(id)
+	// var totalQuantity = 0.0
+	// for i := 0; i < len(result.Dispatches); i++ {
+	// 	for j := 0; j < len(result.Dispatches[i].Items); j++ {
+	// 		totalQuantity = totalQuantity + result.Dispatches[i].Items[j].Quantity.Float64
+	// 	}
+	// }
+
 	fmt.Printf("Found operation %s and %d dispatches", result.Name.String, len(result.Dispatches))
+	fmt.Printf("Total quantity in operation is:  %f", models.TotalDispatch(result.ID))
+	fmt.Printf("Total number of beneficiaries in operation is: %f", models.TotalBeneficiaries(result.ID))
 
 	// buf, err := json.MarshalIndent(result, "", "\t")
 	// if err != nil {

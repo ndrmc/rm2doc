@@ -11,27 +11,43 @@ import (
 // Dispatch represent a single goods issue ticket from warehouse
 type Dispatch struct {
 	Base
-	ID                   int            `json:"id"`
-	GinNo                int            `json:"gin_no"`
-	OperationID          sql.NullInt64  `json:"operation_id"`
-	RequisitionNo        sql.NullString `json:"requisition_no"`
-	DispatchDate         time.Time      `json:"dispatch_date"`
-	FdpID                sql.NullInt64  `json:"fdp_id"`
-	WeightBridgeTicketNo sql.NullString `json:"weight_bridge_ticket_no"`
-	TransporterID        sql.NullInt64  `json:"transporter_id"`
-	PlateNo              sql.NullString `json:"plate_no"`
-	TrailerPlateNo       sql.NullString `json:"trailer_plate_no"`
-	DriverName           sql.NullString `json:"driver_name"`
-	Remark               sql.NullString `json:"remark"`
-	Draft                sql.NullBool   `json:"draft"`
-	Deleted              sql.NullBool   `json:"deleted"`
-	HubID                sql.NullInt64  `json:"hub_id"`
-	WarehouseID          sql.NullInt64  `json:"warehouse_id"`
-	StorekeeperName      sql.NullString `json:"storekeeper_name"`
-	DispatchIDGUID       sql.NullString `json:"dispatch_id_guid"`
-	DispatchedDateEC     sql.NullString `json:"dispatched_date_ec"`
-	DispatchTypeID       sql.NullInt64  `json:"dispatch_type_id"`
-	DispatchType         sql.NullInt64  `json:"dispatch_type"`
+	ID                   int             `json:"id"`
+	GinNo                int             `json:"gin_no"`
+	OperationID          sql.NullInt64   `json:"operation_id"`
+	RequisitionNo        sql.NullString  `json:"requisition_no"`
+	DispatchDate         time.Time       `json:"dispatch_date"`
+	FdpID                sql.NullInt64   `json:"fdp_id"`
+	WeightBridgeTicketNo sql.NullString  `json:"weight_bridge_ticket_no"`
+	TransporterID        sql.NullInt64   `json:"transporter_id"`
+	PlateNo              sql.NullString  `json:"plate_no"`
+	TrailerPlateNo       sql.NullString  `json:"trailer_plate_no"`
+	DriverName           sql.NullString  `json:"driver_name"`
+	Remark               sql.NullString  `json:"remark"`
+	Draft                sql.NullBool    `json:"draft"`
+	Deleted              sql.NullBool    `json:"deleted"`
+	HubID                sql.NullInt64   `json:"hub_id"`
+	WarehouseID          sql.NullInt64   `json:"warehouse_id"`
+	StorekeeperName      sql.NullString  `json:"storekeeper_name"`
+	DispatchIDGUID       sql.NullString  `json:"dispatch_id_guid"`
+	DispatchedDateEC     sql.NullString  `json:"dispatched_date_ec"`
+	DispatchTypeID       sql.NullInt64   `json:"dispatch_type_id"`
+	DispatchType         sql.NullInt64   `json:"dispatch_type"`
+	Items                []*DispatchItem `json:"dispatch_items"`
+}
+
+//DispatchItem represents item detail for a dispatch
+type DispatchItem struct {
+	Base
+	ID                  int             `json:"id"`
+	DispatchID          int             `json:"dispatch_id"`
+	CommodityCategoryID sql.NullInt64   `json:"commodity_category_id"`
+	CommodityID         sql.NullInt64   `json:"commodity_id"`
+	Quantity            sql.NullFloat64 `json:"quantity"`
+	ProjectID           sql.NullInt64   `json:"project_id"`
+	GUIDRef             sql.NullString  `json:"guid_ref"`
+	OrganizationID      sql.NullInt64   `json:"organization_id"`
+	UnitOfMeasureID     sql.NullInt64   `json:"unit_of_measure_id"`
+	Deleted             sql.NullBool    `json:"deleted"`
 }
 
 // GetDispatch fetches a specific Dispatch record from transactional database
@@ -51,7 +67,7 @@ func GetDispatch(id int) *Dispatch {
 }
 
 // GetDispatches fetches all dispatch records for a given operation
-func GetDispatches(operationID int64) []*Dispatch {
+func GetDispatches(operationID int) []*Dispatch {
 	var stmt = "select * from dispatches where operation_id=$1"
 	rows, err := database.Con.Query(stmt, operationID)
 	if err != nil {
@@ -64,6 +80,18 @@ func GetDispatches(operationID int64) []*Dispatch {
 	}
 
 	return dispatches
+}
+
+// TotalDispatch calculates total dispatch amount
+func TotalDispatch(operationID int) float64 {
+	var stmt = "SELECT sum(di.quantity) as quantity_sum FROM dispatch_items di INNER JOIN dispatches d ON di.dispatch_id = d.id where d.operation_id = $1"
+	var totalDispatch float64
+	err := database.Con.QueryRow(stmt, operationID).Scan(&totalDispatch)
+
+	if err != nil {
+		common.LogError(err)
+	}
+	return totalDispatch
 }
 
 func mapDispatches(rows *sql.Rows) ([]*Dispatch, error) {
@@ -103,8 +131,56 @@ func mapDispatches(rows *sql.Rows) ([]*Dispatch, error) {
 		if err != nil {
 			panic(err)
 		}
+		d.Items = getDispatchItems(d.ID)
 		dispatches = append(dispatches, d)
 	}
 
 	return dispatches, err
+}
+
+func getDispatchItems(dispatchID int) []*DispatchItem {
+	var stmt = "select * from dispatch_items where dispatch_id=$1"
+	rows, err := database.Con.Query(stmt, dispatchID)
+	if err != nil {
+		common.LogError(err)
+	}
+
+	items, err := mapDispatchItems(rows)
+	if err != nil {
+		common.LogError(err)
+	}
+
+	return items
+}
+
+func mapDispatchItems(rows *sql.Rows) ([]*DispatchItem, error) {
+	var err error
+	items := make([]*DispatchItem, 0)
+
+	for rows.Next() {
+		di := new(DispatchItem)
+		err = rows.Scan(
+			&di.ID,
+			&di.DispatchID,
+			&di.CommodityCategoryID,
+			&di.CommodityID,
+			&di.Quantity,
+			&di.ProjectID,
+			&di.CreatedBy,
+			&di.ModifiedBy,
+			&di.Deleted,
+			&di.DeletedAt,
+			&di.CreatedAt,
+			&di.UpdatedAt,
+			&di.GUIDRef,
+			&di.OrganizationID,
+			&di.UnitOfMeasureID)
+
+		if err != nil {
+			panic(err)
+		}
+		items = append(items, di)
+	}
+
+	return items, err
 }
