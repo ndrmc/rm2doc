@@ -28,9 +28,10 @@ type Operation struct {
 	ActualStart      pg.NullTime    `json:"actual_start"`
 	ActualEnd        pg.NullTime    `json:"actual_end"`
 	Status           sql.NullInt64  `json:"status"`
-	HrdInfo          *Hrd
-	ProgramInfo      *Program
-	RationInfo       *Ration
+	HrdInfo          *Hrd           `json:"hrd"`
+	ProgramInfo      *Program       `json:"program"`
+	RationInfo       *Ration        `json:"ration"`
+	Dispatches       []*Dispatch    `json:"dispatches"`
 }
 
 // GetOperation returns an operation record from transactional database
@@ -49,6 +50,7 @@ func GetOperation(id int64) *Operation {
 	// Load navigation properties
 	operation := operations[0]
 	operation.HrdInfo = GetHrd(operation.HrdID.Int64)
+	operation.Dispatches = GetDispatches(operation.ID)
 	return operation
 }
 

@@ -16,7 +16,7 @@ import (
 func main() {
 	conf := common.LoadConfiguration("/Users/yared/src/gospace/src/github.com/ndrmc/analytics/config.json")
 	initDB(conf)
-	loadOperation(19)
+	loadOperation(1)
 }
 
 func countOperations() {
@@ -26,14 +26,13 @@ func countOperations() {
 
 func loadOperation(id int64) {
 	result := models.GetOperation(id)
+	fmt.Printf("Found operation %s and %d dispatches", result.Name.String, len(result.Dispatches))
 
-	buf, err := json.MarshalIndent(result, "", "\t")
-	if err != nil {
-		common.LogError(err)
-	}
-	fmt.Println("Operation found:")
-	fmt.Println(result.HrdID.Int64)
-	fmt.Println(string(buf))
+	// buf, err := json.MarshalIndent(result, "", "\t")
+	// if err != nil {
+	// 	common.LogError(err)
+	// }
+	// fmt.Println(string(buf))
 }
 
 func loadOperations() {
