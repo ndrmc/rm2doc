@@ -1,0 +1,10 @@
+{
+    "pghost": "localhost",
+    "pgport": "5432",
+    "pguser": "cats",
+    "dbname": "cats_development",
+    "pgpass": "cats",
+    "mongourl": "localhost",
+    "mongodb": "cats_analytics",
+    "mongopass": "cats"
+}
