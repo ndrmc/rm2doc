@@ -6,15 +6,15 @@ import (
 	"log"
 
 	"github.com/jinzhu/gorm"
-	"github.com/ndrmc/analytics/pkg/database"
+	"github.com/ndrmc/rm2doc/pkg/database"
 
 	_ "github.com/lib/pq"
-	"github.com/ndrmc/analytics/pkg/common"
-	"github.com/ndrmc/analytics/pkg/models"
+	"github.com/ndrmc/rm2doc/pkg/common"
+	"github.com/ndrmc/rm2doc/pkg/models"
 )
 
 func main() {
-	conf := common.LoadConfiguration("/Users/yared/src/gospace/src/github.com/ndrmc/analytics/config.json")
+	conf := common.LoadConfiguration("/Users/yared/src/gospace/src/github.com/ndrmc/rm2doc/config.json")
 	initDB(conf)
 	loadOperation(37)
 }

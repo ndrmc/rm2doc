@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/ndrmc/analytics/pkg/common"
-	"github.com/ndrmc/analytics/pkg/database"
+	"github.com/ndrmc/rm2doc/pkg/common"
+	"github.com/ndrmc/rm2doc/pkg/database"
 )
 
 // Dispatch represent a single goods issue ticket from warehouse

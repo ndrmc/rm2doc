@@ -5,6 +5,6 @@
     "dbname": "cats_development",
     "pgpass": "cats",
     "mongourl": "localhost",
-    "mongodb": "cats_analytics",
+    "mongodb": "cats_rm2doc",
     "mongopass": "cats"
 }

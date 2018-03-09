@@ -1,11 +1,11 @@
 package models
 
 import (
-	"github.com/ndrmc/analytics/pkg/common"
-	"github.com/ndrmc/analytics/pkg/database"
+	"github.com/ndrmc/rm2doc/pkg/common"
+	"github.com/ndrmc/rm2doc/pkg/database"
 )
 
-// Operation represents a construct from CATS which is one of the collections in the analytics db
+// Operation represents a construct from CATS which is one of the collections in the rm2doc db
 type Operation struct {
 	BaseModel
 	ID               int               `json:"id"`
