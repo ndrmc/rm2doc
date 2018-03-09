@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/ndrmc/analytics/pkg/database"
+	"github.com/ndrmc/rm2doc/pkg/database"
 )
 
 // Hrd represents food requirement for relief program
