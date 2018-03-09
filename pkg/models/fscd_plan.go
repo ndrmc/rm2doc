@@ -2,8 +2,8 @@ package models
 
 // FscdPlan represents food requirement for PSNP program
 type FscdPlan struct {
-	Base
-	ID       int64
+	BaseModel
+	ID       int `json:"id"`
 	Name     string
 	Code     string
 	Year     string

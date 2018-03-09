@@ -1,11 +1,8 @@
 package database
 
-import (
-	"database/sql"
-	//Importing postgres library
-)
+import "github.com/jinzhu/gorm"
 
 var (
-	// Con provides gloabaly available database connection
-	Con *sql.DB
+	// Session provides gloabaly available database connection
+	Session *gorm.DB
 )
