@@ -2,9 +2,9 @@ package models
 
 // Program represents the type of assistance e.g. Relief, PSNP or IPD
 type Program struct {
-	Base
-	ID          int64
-	Name        string
-	Code        string
-	Description string
+	BaseModel
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
 }
