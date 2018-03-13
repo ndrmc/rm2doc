@@ -4,7 +4,9 @@
     "pguser": "cats",
     "dbname": "cats_development",
     "pgpass": "cats",
-    "mongourl": "localhost",
+    "mongohost": "127.0.0.1",
+    "mongoport": "27017",
     "mongodb": "cats_rm2doc",
-    "mongopass": "cats"
+    "mongopassword": "cats",
+    "mongouser": "cats"
 }

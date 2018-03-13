@@ -8,13 +8,15 @@ import (
 
 // Config returns configuration parameters about database connection and credentials
 type Config struct {
-	PgHost    string
-	PgPort    string
-	PgUser    string
-	PgPass    string
-	DbName    string
-	MongoURL  string
-	MongoUser string
+	PgHost        string
+	PgPort        string
+	PgUser        string
+	PgPass        string
+	DbName        string
+	MongoHost     string
+	MongoPort     string
+	MongoUser     string
+	MongoPassword string
 }
 
 // LoadConfiguration retrives configuration information from file and returns a setting struct

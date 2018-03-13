@@ -4,8 +4,8 @@ Relational to Document - A tool to convert CATS transactional records in Postgre
 # Building and running
 ## Dependencies
 Rm2Doc depends on the following external libraries in addtion to the standard go libs:
-- GORM (github.com/jinzhu/gorm)
-- pq (github.com/lib/pq)
+- [GORM](https://github.com/jinzhu/gorm)
+- [pq](https://github.com/lib/pq)
 
 ## Managing dependencies
 Rm2Doc uses [dep](https://github.com/golang/dep) package manager and vendoring tool.
