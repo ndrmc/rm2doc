@@ -1,6 +1,9 @@
 package models
 
 import (
+	"encoding/json"
+
+	"github.com/jinzhu/gorm"
 	"github.com/ndrmc/rm2doc/pkg/common"
 	"github.com/ndrmc/rm2doc/pkg/database"
 	"gopkg.in/mgo.v2/bson"
@@ -30,6 +33,19 @@ type Operation struct {
 	RegionalRequests []RegionalRequest `json:"regional_requests" bson:"regional_requests"`
 	Requisitions     []Requisition     `json:"requisitions" bson:"requisitions"`
 	Dispatches       []Dispatch        `json:"dispatches" bson:"dispatch"`
+	Document         string            `json:"document" sql:"type:JSONB DEFAULT '{}'::JSONB"`
+}
+
+// OperationMetadata represents document metadata for operation
+type OperationMetadata struct {
+	gorm.Model
+	ID       int    `json:"id"`
+	Document string `json:"document" sql:"type:JSONB DEFAULT '{}'::JSONB"`
+}
+
+// TableName sets table to use for saving operation metadata
+func (OperationMetadata) TableName() string {
+	return "operations"
 }
 
 // GetOperation returns an operation record from transactional database
@@ -87,6 +103,16 @@ func UpdateOperationDocument(operation Operation) {
 	if err != nil {
 		common.LogError(err)
 	}
+}
+
+// SaveOperationMetadata saves metadata for 'operation'
+func SaveOperationMetadata(operation Operation) {
+	data, err := json.Marshal(operation)
+	if err != nil {
+		common.LogError(err)
+	}
+
+	database.Session.Exec("UPDATE operations SET document=? WHERE id = ?", string(data), operation.ID)
 }
 
 // GetOperationDocument returns graph of an operation record

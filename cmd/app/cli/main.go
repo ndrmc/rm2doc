@@ -18,7 +18,7 @@ import (
 func main() {
 	conf := common.LoadConfiguration("/Users/yared/src/gospace/src/github.com/ndrmc/rm2doc/config.json")
 	initDB(conf)
-	// loadOperation(37)
+	// loadOperation(32)
 	migrateOperations()
 }
 
@@ -30,7 +30,7 @@ func countOperations() {
 func loadOperation(id int) {
 	result := models.GetOperationGraph(id)
 
-	models.UpdateOperationDocument(result)
+	// models.UpdateOperationDocument(result)
 
 	// fmt.Printf("Found operation %s and %d dispatches", result.Name, len(result.Dispatches))
 	fmt.Printf("Operation is:  %s\n", result.Name)
@@ -39,8 +39,10 @@ func loadOperation(id int) {
 
 	// fmt.Printf("Total quantity in operation is:  %f", models.TotalDispatch(result.ID))
 	fmt.Printf("Total number of beneficiaries in operation is: %f", models.TotalBeneficiaries(result.ID))
+	fmt.Println("Saving operation metadata........")
+	models.SaveOperationMetadata(result)
 
-	// buf, err := json.MarshalIndent(result, "", "\t")
+	// buf, err := json.Marshal(result)
 	// if err != nil {
 	// 	common.LogError(err)
 	// }
@@ -52,14 +54,16 @@ func migrateOperations() {
 	all := models.GetAllOperations()
 
 	for _, o := range all {
-		models.UpdateOperationDocument(o)
+		value := models.GetOperationGraph(o.ID)
+		models.SaveOperationMetadata(value)
 		log.Printf("Migrated operation : %s", o.Name)
 	}
 }
 
 func loadOperations() {
 	total := models.GetAllOperations()
-	ops, err := json.MarshalIndent(total, "", "\t")
+	// ops, err := json.MarshalIndent(total, "", "\t")
+	ops, err := json.Marshal(total)
 	if err != nil {
 		common.LogError(err)
 	}
@@ -75,7 +79,7 @@ func initDB(conf common.Config) {
 	if pgErr != nil {
 		log.Panicf("Error making connection to database. Detail: %s", pgErr)
 	}
-
+	// database.Session.LogMode(true)
 	common.LogInfo("Successfuly connected to database")
 
 	// mongoInfo := fmt.Sprintf("mongodb://%s:%s@%s:%s", conf.MongoUser, conf.MongoPassword, conf.MongoHost, conf.MongoPort)
