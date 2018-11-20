@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	conf := common.LoadConfiguration("/Users/yared/src/gospace/src/github.com/ndrmc/rm2doc/config.json")
+	conf := common.LoadConfiguration("./config.json")
 	initDB(conf)
 	// loadOperation(32)
 	migrateOperations()
